@@ -1,6 +1,7 @@
 package org.example.store.product;
 
-import java.math.BigDecimal;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,14 +12,27 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product {
-    private String name;
-    private String description;
-    private String summary;
-    private BigDecimal price;
+    private Long id;
 
-    Product(ProductDto productDto) {
+    @NotBlank
+    private String name;
+
+    private int categoryID;
+    @NotBlank
+    private String description;
+
+    private String summary;
+
+    @Positive
+    private int price;
+
+    Product(ProductDto productDto){
+
+        this.id = productDto.getId();
+        this.categoryID = productDto.getCategoryID();
         this.name = productDto.getName();
         this.description = productDto.getDescription();
+        this.summary = productDto.getDescription();
         this.price = productDto.getPrice();
     }
 }

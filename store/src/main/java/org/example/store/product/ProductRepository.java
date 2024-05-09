@@ -13,7 +13,10 @@ public class ProductRepository {
     HashMap<Long, Product> products = new HashMap<>();
 
     public Product save(Product product) {
-        products.put(id++, product);
+
+        product.setId(++id);
+
+        products.put(product.getId(), product);
         return product;
     }
 
@@ -25,7 +28,19 @@ public class ProductRepository {
         return new ArrayList<>(products.values());
     }
 
+    public List<Product> findProducts(int categoryId, int currentPage, int limit){
+        List<Product> returnProducts = new ArrayList<>();
+        products.forEach(product -> {
+            if(product. == categoryId){
+                returnProducts.add(product);
+            }
+        });
+
+        return returnProducts;
+    }
+
     public List<Product> findByName(String name) {
+
         List<Product> products = new ArrayList<>();
         products.forEach(product -> {
             if (product.getName().equals(name)) {
