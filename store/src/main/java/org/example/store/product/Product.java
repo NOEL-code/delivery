@@ -3,6 +3,7 @@ package org.example.store.product;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class Product {
     private Long id;
 
@@ -18,6 +20,7 @@ public class Product {
     private String name;
 
     private int categoryID;
+
     @NotBlank
     private String description;
 

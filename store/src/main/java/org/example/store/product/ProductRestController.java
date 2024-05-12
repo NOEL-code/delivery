@@ -2,11 +2,13 @@ package org.example.store.product;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,9 +42,16 @@ public class ProductRestController {
     }
 
     @GetMapping("/products")
-    public List<Product> getProductsA(@RequestParam(value = "currentPage") int currentPage, @RequestParam(value = "limit") int limit, @RequestParam(value = "categoryId") int categoryId) {
-        return productService.findByCategory(currentPage, limit, categoryId);
+    public List<Product> getProductsA(@RequestParam(value = "currentPage") int currentPage,
+        @RequestParam(value = "limit") int limit,
+        @RequestParam(value = "categoryID", required = false) Integer categoryID) {
+        if(categoryID != null) {
+            return productService.findByCategory(currentPage, limit, categoryID);
+        } else {
+            return productService.findAll();
+        }
     }
+
 
     @GetMapping
     public ResponseEntity<List<Product>> findAllProducts() {
@@ -60,6 +69,28 @@ public class ProductRestController {
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
         }
         return ResponseEntity.ok(productService.save(product));
+    }
+
+    @PostMapping("/products/delete")
+    public ResponseEntity<?> deleteProduct(@RequestBody Map<String, List<Long>> deleteIds) {
+
+        List<Product> deleteProducts = productService.deleteProducts(deleteIds);
+        if (deleteProducts != null) {
+            return ResponseEntity.ok(deleteProducts);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
+        }
+    }
+
+    @DeleteMapping("/product/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable(value = "id") Long id) {
+
+        Product deleteProduct = productService.deleteProduct(id);
+        if (deleteProduct != null) {
+            return ResponseEntity.ok(deleteProduct);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
+        }
     }
 
 
