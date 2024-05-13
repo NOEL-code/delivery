@@ -9,13 +9,16 @@ public class MemberRepository {
     Map<String, Member> members = new HashMap<>();
 
 
-    public void save(Member member) {
+    public Member save(Member member) {
         members.put(member.getUserId(), member);
+        return members.get(member.getUserId());
     }
 
-    public Member findById(Long id) {
+    public Member findById(String id) {
         return members.get(id);
     }
+
+
 
 
 }

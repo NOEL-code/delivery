@@ -13,8 +13,16 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
-    public void join(Member member) {
-        memberRepository.save(member);
+    public Member join(Member member) {
+        return memberRepository.save(member);
+    }
+
+    public Member login(Member member) {
+
+    }
+
+    public Member findById(String id) {
+        return memberRepository.findById(id);
     }
 
 }
