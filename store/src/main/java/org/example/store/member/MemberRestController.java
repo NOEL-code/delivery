@@ -1,6 +1,7 @@
 package org.example.store.member;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.store.member.ApiUtils.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,24 +21,47 @@ public class MemberRestController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<Member> join(@RequestBody Member member) {
+    public ResponseEntity<ApiResult<Object>> join(@RequestBody Member member) {
         if (member == null) {
-            return ResponseEntity.badRequest().body(null);
-        } else {
-            return ResponseEntity.ok(memberService.join(member));
+            return ResponseEntity.badRequest().body(ApiUtils.error("Invalid member data", HttpStatus.BAD_REQUEST));
+        }
+        try {
+            String userId = memberService.join(member).getUserId();
+            return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(userId));
+        } catch (Exception e) {
+            log.error("Error during member join", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiUtils.error("Join failed", HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Member member) {
+    public ResponseEntity<ApiResult<Object>> login(@RequestBody Member member) {
         if (member == null) {
-            return ResponseEntity.badRequest().body("Invalid member data");
-        } else {
-            if (checkDuplicate(member.getUserId())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Member with the same ID already exists");
-            } else {
-                return ResponseEntity.ok("Login successful");
-            }
+            return ResponseEntity.badRequest().body(ApiUtils.error("Invalid member data", HttpStatus.BAD_REQUEST));
+        }
+        if (checkDuplicate(member.getUserId())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiUtils.error("Member with the same ID already exists", HttpStatus.CONFLICT));
+        }
+        return ResponseEntity.ok(ApiUtils.success("Login successful"));
+    }
+
+    @PostMapping("/join/api/result")
+    public ResponseEntity<ApiResult<Object>> joinByApiResult(@RequestBody Member member) {
+        if (member == null) {
+            return ResponseEntity.badRequest().body(ApiUtils.error("Invalid member data", HttpStatus.BAD_REQUEST));
+        }
+        log.info(member.toString());
+
+        if (checkDuplicate(member.getUserId())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiUtils.error("Duplicate user ID", HttpStatus.CONFLICT));
+        }
+
+        try {
+            String userId = memberService.join(member).getUserId();
+            return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(userId));
+        } catch (Exception e) {
+            log.error("Error during member join", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiUtils.error("Join failed", HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
 
@@ -45,4 +69,3 @@ public class MemberRestController {
         return memberService.findById(id) != null;
     }
 }
-
