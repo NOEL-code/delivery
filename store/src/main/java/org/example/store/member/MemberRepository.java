@@ -17,9 +17,13 @@ public class MemberRepository {
         return findById(member.getId());
     }
 
-    public Member findByUserId(String id) {
-        return em.find(Member.class, id);
+    public Member findByUserId(String userId) {
+        // Assuming userId is unique
+        return em.createQuery("SELECT m FROM Member m WHERE m.userId = :userId", Member.class)
+            .setParameter("userId", userId)
+            .getSingleResult();
     }
+
     public Member findById(Long id) {
         return em.find(Member.class, id);
     }

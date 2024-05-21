@@ -29,11 +29,12 @@ public class MemberRestController {
         if (member == null) {
             return ResponseEntity.badRequest().body(ApiUtils.error("Invalid member data", HttpStatus.BAD_REQUEST));
         }
-        if (checkDuplicate(member.getUserId())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiUtils.error("Member with the same ID already exists", HttpStatus.CONFLICT));
-        }
+//        if (checkDuplicate(member.getUserId())) {
+//            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiUtils.error("Member with the same ID already exists", HttpStatus.CONFLICT));
+//        }
 
         try {
+
             String userId = memberService.join(member).getUserId();
             return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(userId));
         } catch (Exception e) {
