@@ -1,7 +1,8 @@
 package org.example.store.member;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,11 +12,26 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@Entity
 public class Member {
-    private String UserId;
+    @Id
+    private Long id;
+    private String userId;
+    private String pw;
     private String name;
-    private String password;
-    private String phone;
     private String email;
+    private String contact;
+
+
+    public static Member fromDtoToEntity(MemberDto memberDto) {
+        return new Member(
+            memberDto.getId(),
+            memberDto.getUserId(),
+            memberDto.getPw(),
+            memberDto.getName(),
+            memberDto.getEmail(),
+            memberDto.getContact()
+        );
+    }
 }
+

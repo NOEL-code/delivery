@@ -17,10 +17,6 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-//    public Member login(Member member) {
-//
-//    }
-
     public Member findById(String id) {
         return memberRepository.findById(id);
     }

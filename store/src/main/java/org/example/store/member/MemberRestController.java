@@ -65,6 +65,11 @@ public class MemberRestController {
         }
     }
 
+//    @GetMapping("/datasource")
+//    public ResponseEntity<ApiResult<Object>> datasource() {
+//        MemberService.makeConnection();
+//    }
+
     public boolean checkDuplicate(String id) {
         return memberService.findById(id) != null;
     }
