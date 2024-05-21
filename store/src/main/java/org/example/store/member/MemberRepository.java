@@ -2,26 +2,25 @@ package org.example.store.member;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import java.util.HashMap;
-import java.util.Map;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-@RequiredArgsConstructor
 public class MemberRepository {
-    Map<String, Member> members = new HashMap<>();
 
     @PersistenceContext
-    private final EntityManager em;
+    private EntityManager em;
 
+    @Transactional
     public Member save(Member member) {
         em.persist(member);
-        return member;
+        return findById(member.getId());
     }
 
-    public Member findById(String id) {
-        return members.get(id);
+    public Member findByUserId(String id) {
+        return em.find(Member.class, id);
+    }
+    public Member findById(Long id) {
+        return em.find(Member.class, id);
     }
 }

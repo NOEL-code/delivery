@@ -16,7 +16,4 @@ public class MemberDto {
     private String email;
     private String contact;
 
-    public Member convertToEntity() {
-        return new Member(id, userId, pw, name, email, contact);
-    }
 }

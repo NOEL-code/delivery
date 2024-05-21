@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MemberService {
 
+    @Autowired
     MemberRepository memberRepository;
 
     @Autowired
@@ -18,7 +19,7 @@ public class MemberService {
     }
 
     public Member findById(String id) {
-        return memberRepository.findById(id);
+        return memberRepository.findByUserId(id);
     }
 
 }
