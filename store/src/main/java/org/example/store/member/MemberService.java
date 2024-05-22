@@ -1,5 +1,6 @@
 package org.example.store.member;
 
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +15,12 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
+
     public Member join(Member member) {
         return memberRepository.save(member);
     }
 
-    public Member findById(String id) {
+    public Optional<Member> findById(String id) {
         return memberRepository.findByUserId(id);
     }
 
