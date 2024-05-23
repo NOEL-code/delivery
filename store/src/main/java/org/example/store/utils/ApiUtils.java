@@ -1,4 +1,4 @@
-package org.example.store.member;
+package org.example.store.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +16,7 @@ public class ApiUtils {
 
     @Getter
     @AllArgsConstructor
-    static class ApiResult<T> {
+    public static class ApiResult<T> {
         boolean success;
         T response;
         ApiError error;

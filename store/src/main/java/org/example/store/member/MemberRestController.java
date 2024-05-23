@@ -2,7 +2,8 @@ package org.example.store.member;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.example.store.member.ApiUtils.ApiResult;
+import org.example.store.utils.ApiUtils;
+import org.example.store.utils.ApiUtils.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,6 @@ public class MemberRestController {
 //        if (checkDuplicate(member.getUserId())) {
 //            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiUtils.error("Member with the same ID already exists", HttpStatus.CONFLICT));
 //        }
-
         try {
 
             String userId = memberService.join(member).getUserId();
@@ -73,6 +73,6 @@ public class MemberRestController {
     }
 
     public boolean checkDuplicate(String id) {
-        return memberService.findById(id) != null;
+        return memberService.findById(id).isPresent();
     }
 }

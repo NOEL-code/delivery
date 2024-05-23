@@ -1,66 +1,45 @@
 package org.example.store.product;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.example.store.exception.ProductNotFoundException;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
 
-    @Autowired
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    @Transactional
+    public void save(Product product) {
+        productRepository.save(product);
     }
 
-    public List<Product> findAll() {
+    @Transactional
+    public void updateItem(Long itemId, String name, int price, int stockQuantity) {
+        Product product = productRepository.findById(itemId)
+            .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        product.setName(name);
+        product.setPrice(price);
+        product.setStockQuantity(stockQuantity);
+        productRepository.save(product);
+    }
+
+    public List<Product> findItems() {
         return productRepository.findAll();
     }
 
-    public List<Product> findByCategory(int categoryId, int currentPage, int limit) {
-        return productRepository.findProducts(categoryId, currentPage, limit);
+    public Product findOne(Long itemId) {
+        return productRepository.findById(itemId)
+            .orElseThrow(() -> new ProductNotFoundException("Product not found"));
     }
 
-    public Product findById(Long id) {
-        Optional<Product> productOptional = Optional.ofNullable(productRepository.findById(id));
-        return productOptional.orElse(null); // Return null if product not found
-    }
-
-
-    public Product save(Product product) {
-        return productRepository.save(product);
-    }
-
-    public List<Product> deleteProducts(Map<String, List<Long>> deleteIds) {
-        List<Product> products = new ArrayList<>();
-
-        deleteIds.forEach((key, value) -> {
-            value.forEach(id -> {
-                Optional<Product> productOptional = Optional.ofNullable(
-                    productRepository.findById(id));
-                productOptional.ifPresent(product -> {
-                    products.add(product);
-                    productRepository.deleteProduct(product.getId());
-                });
-            });
-        });
-
-        return products;
-    }
-
-
-
-    public Product deleteProduct(Long id) {
-
-        Product product = productRepository.findById(id);
-        if(product != null) {
-            productRepository.deleteProduct(id);
-            return product;
-        }
-        return null;
+    @Transactional
+    public void delete(Long itemId) {
+        productRepository.delete(itemId);
     }
 }

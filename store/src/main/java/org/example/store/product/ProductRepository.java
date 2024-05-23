@@ -1,55 +1,40 @@
 package org.example.store.product;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import jakarta.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.example.store.exception.ProductNotFoundException;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class ProductRepository {
 
-    Long id = 0L;
+    private final EntityManager em;
 
-    HashMap<Long, Product> products = new HashMap<>();
-
-    public Product save(Product product) {
-
-        product.setId(++id);
-
-        products.put(product.getId(), product);
-        return product;
+    public void save(Product product) {
+        if (product.getName() == null) {
+            em.persist(product);
+        } else {
+            em.merge(product);
+        }
     }
 
-    public Product findById(Long id) {
-        return products.get(id);
+    public Optional<Product> findById(Long id) {
+        return Optional.ofNullable(em.find(Product.class, id));
     }
 
     public List<Product> findAll() {
-        return new ArrayList<>(products.values());
-    }
-
-    public List<Product> findProducts(int categoryId, int currentPage, int limit) {
-        List<Product> returnProducts = new ArrayList<>();
-        int count = 0;
-
-        for (Product product : products.values()) {
-
-            if (product.getCategoryID() != categoryId) {
-                continue;
-            }
-
-            if (count++ >= (currentPage - 1) * limit) {
-                returnProducts.add(product);
-            }
-
-            if (count >= currentPage * limit) {
-                break;
-            }
+        List<Product> products = em.createQuery("select p from Product p", Product.class).getResultList();
+        if (products.isEmpty()) {
+            throw new ProductNotFoundException("No products found");
         }
-        return returnProducts;
+        return products;
     }
 
-    public void deleteProduct(Long id) {
-        products.remove(id);
+    public void delete(Long id) {
+        Product product = findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        em.remove(product);
     }
 }

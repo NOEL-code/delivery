@@ -1,4 +1,4 @@
-package org.example.store.stack;
+package org.example.store.exception;
 
 import java.util.ArrayList;
 

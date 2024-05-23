@@ -1,41 +1,38 @@
 package org.example.store.product;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.store.exception.NotEnoughStockException;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Getter @Setter
 public class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "item_id")
     private Long id;
 
-    @NotBlank
     private String name;
 
-    private int categoryID;
-
-    @NotBlank
-    private String description;
-
-    private String summary;
-
-    @Positive
     private int price;
 
-    Product(ProductDto productDto){
+    @Column(name = "stock_quantity")
+    @JsonProperty("stock_quantity")
+    private int stockQuantity;
 
-        this.id = productDto.getId();
-        this.categoryID = productDto.getCategoryID();
-        this.name = productDto.getName();
-        this.description = productDto.getDescription();
-        this.summary = productDto.getDescription();
-        this.price = productDto.getPrice();
+    public void addStock(int quantity) {
+        this.stockQuantity += quantity;
+    }
+
+    public void removeStock(int quantity) {
+        int restStock = this.stockQuantity - quantity;
+        if (restStock < 0) {
+            throw new NotEnoughStockException("need more stock");
+        }
+        this.stockQuantity = restStock;
     }
 }
