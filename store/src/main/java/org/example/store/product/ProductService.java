@@ -11,35 +11,38 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ProductService {
-
-    private final ProductRepository productRepository;
+    private final ProductJPARepository productJpaRepository;
 
     public Product findOne(Long itemId) {
-        return productRepository.findById(itemId)
-            .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        return productJpaRepository.findById(itemId)
+            .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + itemId));
     }
 
     public List<Product> findItems() {
-        return productRepository.findAll();
+        return productJpaRepository.findAll();
     }
 
     @Transactional
     public void save(Product product) {
-        productRepository.save(product);
+        productJpaRepository.save(product);
     }
 
     @Transactional
     public void updateItem(Long itemId, String name, int price, int stockQuantity) {
-        Product product = productRepository.findById(itemId)
-            .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        Product product = productJpaRepository.findById(itemId)
+            .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + itemId));
         product.setName(name);
         product.setPrice(price);
         product.setStockQuantity(stockQuantity);
-        productRepository.save(product);
+        // No need to call save explicitly after setting properties if Product is a managed entity
+        // productJpaRepository.save(product);
     }
 
     @Transactional
     public void delete(Long itemId) {
-        productRepository.delete(itemId);
+        if (!productJpaRepository.existsById(itemId)) {
+            throw new ProductNotFoundException("Product not found with id: " + itemId);
+        }
+        productJpaRepository.deleteById(itemId);
     }
 }
