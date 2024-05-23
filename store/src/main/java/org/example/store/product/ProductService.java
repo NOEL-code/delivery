@@ -14,6 +14,15 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    public Product findOne(Long itemId) {
+        return productRepository.findById(itemId)
+            .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+    }
+
+    public List<Product> findItems() {
+        return productRepository.findAll();
+    }
+
     @Transactional
     public void save(Product product) {
         productRepository.save(product);
@@ -27,15 +36,6 @@ public class ProductService {
         product.setPrice(price);
         product.setStockQuantity(stockQuantity);
         productRepository.save(product);
-    }
-
-    public List<Product> findItems() {
-        return productRepository.findAll();
-    }
-
-    public Product findOne(Long itemId) {
-        return productRepository.findById(itemId)
-            .orElseThrow(() -> new ProductNotFoundException("Product not found"));
     }
 
     @Transactional
