@@ -39,7 +39,7 @@ public class ProductRestController {
         return new ResponseEntity<>("Product updated successfully", HttpStatus.OK);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{itemId}")
     public ResponseEntity<String> deleteItem(@PathVariable Long itemId) {
         productService.delete(itemId);
         return new ResponseEntity<>("Product deleted successfully", HttpStatus.OK);
